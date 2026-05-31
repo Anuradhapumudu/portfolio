@@ -22,7 +22,7 @@ type Stats = {
 }
 
 // ─── Animated counter ────────────────────────────────────────────
-function AnimatedNumber({ target, duration = 1400 }: { target: number; duration?: number }) {
+function AnimatedNumber({ target, duration = 1400, noFormat = false }: { target: number; duration?: number; noFormat?: boolean }) {
   const [display, setDisplay]   = useState(0)
   const rafRef                  = useRef<number>(0)
   const startRef                = useRef<number | null>(null)
@@ -40,7 +40,7 @@ function AnimatedNumber({ target, duration = 1400 }: { target: number; duration?
     return () => { cancelAnimationFrame(rafRef.current); startRef.current = null }
   }, [target, duration])
 
-  return <>{display.toLocaleString()}</>
+  return <>{noFormat ? display : display.toLocaleString()}</>
 }
 
 // ─── Component ───────────────────────────────────────────────────
@@ -108,6 +108,7 @@ export function GitHubStats() {
       value: stats ? Number(stats.since) : 0,
       label: 'On GitHub Since',
       icon:  'bi-calendar3',
+      noFormat: true,
     },
   ]
 
@@ -122,7 +123,7 @@ export function GitHubStats() {
             >
               {loading
                 ? <span style={{ fontSize: '1.5rem', letterSpacing: '0.1em' }}>···</span>
-                : <AnimatedNumber target={item.value} duration={1400} />
+                : <AnimatedNumber target={item.value} duration={1400} noFormat={item.noFormat} />
               }
             </div>
             <div className="stat-label">

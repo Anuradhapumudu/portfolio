@@ -1,11 +1,8 @@
 name: Deploy Portfolio to GitHub Pages
 
 on:
-  # Runs on every push to the main branch
   push:
     branches: [main]
-
-  # Allows manual trigger from the GitHub Actions tab
   workflow_dispatch:
 
 # Sets permissions so GitHub Actions can deploy to Pages
@@ -14,10 +11,14 @@ permissions:
   pages: write
   id-token: write
 
-# Only allow one deployment at a time, cancel in-progress runs
+# Only allow one deployment at a time
 concurrency:
   group: pages
   cancel-in-progress: true
+
+# Use Node.js 24 to avoid deprecation warnings
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   # ── Build ──────────────────────────────────────────────────────
@@ -27,10 +28,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 20
+      - name: Set up Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -39,8 +40,6 @@ jobs:
       - name: Build production bundle
         run: npm run build
         env:
-          # If you use reCAPTCHA, add VITE_RECAPTCHA_SITE_KEY
-          # as a GitHub secret (Settings → Secrets → Actions)
           VITE_RECAPTCHA_SITE_KEY: ${{ secrets.VITE_RECAPTCHA_SITE_KEY }}
 
       - name: Upload Pages artifact

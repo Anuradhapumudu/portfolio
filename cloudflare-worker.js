@@ -23,10 +23,10 @@ export default {
       'http://localhost:5173',   // Vite dev
       'http://localhost:4173',   // Vite preview
     ]
-    const origin      = request.headers.get('Origin') || ''
-    const corsOrigin  = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0]
+    const origin = request.headers.get('Origin') || ''
+    const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0]
     const corsHeaders = {
-      'Access-Control-Allow-Origin':  corsOrigin,
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
       'Vary': 'Origin',
@@ -44,12 +44,12 @@ export default {
       // ════════════════════════════════════════════════════════
       // ENVIRONMENT SECRETS  (set in Cloudflare dashboard)
       // ════════════════════════════════════════════════════════
-      const RESEND_API_KEY     = env.RESEND_API_KEY
+      const RESEND_API_KEY = env.RESEND_API_KEY
       const TELEGRAM_BOT_TOKEN = env.TELEGRAM_BOT_TOKEN
-      const TELEGRAM_CHAT_ID   = env.TELEGRAM_CHAT_ID   || '-4870773780'
-      const YOUR_EMAIL         = env.YOUR_EMAIL          || 'pumudu820@gmail.com'
-      const FROM_EMAIL         = env.FROM_EMAIL          || 'contact@pumudu.online'
-      const RECAPTCHA_SECRET   = env.RECAPTCHA_SECRET
+      const TELEGRAM_CHAT_ID = env.TELEGRAM_CHAT_ID || '-4870773780'
+      const YOUR_EMAIL = env.YOUR_EMAIL || 'pumudu820@gmail.com'
+      const FROM_EMAIL = env.FROM_EMAIL || 'contact@pumudu.online'
+      const RECAPTCHA_SECRET = env.RECAPTCHA_SECRET
       // env.CONTACT_KV  — KV namespace (bind as "CONTACT_KV" in dashboard)
 
       if (!RESEND_API_KEY || !TELEGRAM_BOT_TOKEN || !RECAPTCHA_SECRET) {
@@ -77,9 +77,9 @@ export default {
 
       // ── Sanitise all user inputs ─────────────────────────────
       const safe = {
-        name:    sanitize(String(name).slice(0, 120)),
-        email:   sanitize(String(email).slice(0, 254)),
-        phone:   sanitize(String(phone || '').slice(0, 30)),
+        name: sanitize(String(name).slice(0, 120)),
+        email: sanitize(String(email).slice(0, 254)),
+        phone: sanitize(String(phone || '').slice(0, 30)),
         message: sanitize(String(message).slice(0, 1000)),
         subject: sanitize(String(subject || 'general').slice(0, 40)),
       }
@@ -99,23 +99,23 @@ export default {
         if (rl.limited) {
           return jsonRes({
             error: `Too many messages. You can send up to 3 messages per hour. Please try again in ${rl.retryAfterMinutes} minute(s).`,
-            code:  'RATE_LIMITED',
+            code: 'RATE_LIMITED',
           }, 429, { ...corsHeaders, 'Retry-After': String(rl.retryAfterSeconds) })
         }
       }
 
       // ── Verify reCAPTCHA v3 ──────────────────────────────────
-      const captchaResp   = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-        method:  'POST',
+      const captchaResp = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body:    new URLSearchParams({ secret: RECAPTCHA_SECRET, response: token, remoteip: clientIP }),
+        body: new URLSearchParams({ secret: RECAPTCHA_SECRET, response: token, remoteip: clientIP }),
       })
       const captchaResult = await captchaResp.json()
 
       if (!captchaResult.success || captchaResult.score < 0.3) {
         return jsonRes({
-          error:   'Security verification failed. Please refresh and try again.',
-          code:    'CAPTCHA_FAILED',
+          error: 'Security verification failed. Please refresh and try again.',
+          code: 'CAPTCHA_FAILED',
           details: captchaResult['error-codes'],
         }, 403, corsHeaders)
       }
@@ -123,24 +123,24 @@ export default {
       // ── Collect Cloudflare visitor metadata ──────────────────
       const cf = request.cf || {}
       const visitor = {
-        ip:             clientIP,
-        country:        cf.country        || 'Unknown',
-        countryName:    getCountryName(cf.country),
-        city:           cf.city           || 'Unknown',
-        region:         cf.region         || 'Unknown',
-        timezone:       cf.timezone       || 'Unknown',
-        postalCode:     cf.postalCode     || '—',
-        latitude:       cf.latitude       || '—',
-        longitude:      cf.longitude      || '—',
-        colo:           cf.colo           || 'Unknown',
-        asn:            cf.asn            || 'Unknown',
-        organization:   cf.asOrganization || 'Unknown',
-        httpProtocol:   cf.httpProtocol   || 'Unknown',
-        tlsVersion:     cf.tlsVersion     || 'Unknown',
-        userAgent:      request.headers.get('User-Agent')        || 'Unknown',
-        referer:        request.headers.get('Referer')           || 'Direct',
-        acceptLang:     request.headers.get('Accept-Language')   || 'Unknown',
-        timestamp:      new Date().toISOString(),
+        ip: clientIP,
+        country: cf.country || 'Unknown',
+        countryName: getCountryName(cf.country),
+        city: cf.city || 'Unknown',
+        region: cf.region || 'Unknown',
+        timezone: cf.timezone || 'Unknown',
+        postalCode: cf.postalCode || '—',
+        latitude: cf.latitude || '—',
+        longitude: cf.longitude || '—',
+        colo: cf.colo || 'Unknown',
+        asn: cf.asn || 'Unknown',
+        organization: cf.asOrganization || 'Unknown',
+        httpProtocol: cf.httpProtocol || 'Unknown',
+        tlsVersion: cf.tlsVersion || 'Unknown',
+        userAgent: request.headers.get('User-Agent') || 'Unknown',
+        referer: request.headers.get('Referer') || 'Direct',
+        acceptLang: request.headers.get('Accept-Language') || 'Unknown',
+        timestamp: new Date().toISOString(),
         recaptchaScore: captchaResult.score || 0,
       }
 
@@ -150,37 +150,37 @@ export default {
       const [emailResult, telegramResult, autoReplyResult] = await Promise.allSettled([
         // 1. Notification email → you
         fetch('https://api.resend.com/emails', {
-          method:  'POST',
+          method: 'POST',
           headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-          body:    JSON.stringify({
-            from:      `Pumudu Anuradha <${FROM_EMAIL}>`,
-            to:        YOUR_EMAIL,
-            reply_to:  safe.email,
-            subject:   `📬 [${subjectLabel}] New message from ${safe.name}`,
-            html:      generateEmailHTML(safe.name, safe.email, safe.phone, safe.message, safe.subject, subjectLabel, visitor),
+          body: JSON.stringify({
+            from: `Pumudu Anuradha <${FROM_EMAIL}>`,
+            to: YOUR_EMAIL,
+            reply_to: safe.email,
+            subject: `📬 [${subjectLabel}] New message from ${safe.name}`,
+            html: generateEmailHTML(safe.name, safe.email, safe.phone, safe.message, safe.subject, subjectLabel, visitor),
           }),
         }),
 
         // 2. Telegram notification → you
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-          method:  'POST',
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({
-            chat_id:    TELEGRAM_CHAT_ID,
-            text:       generateTelegram(safe.name, safe.email, safe.phone, safe.message, safe.subject, subjectLabel, visitor),
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: generateTelegram(safe.name, safe.email, safe.phone, safe.message, safe.subject, subjectLabel, visitor),
             parse_mode: 'HTML',
           }),
         }),
 
         // 3. Auto-reply → sender
         fetch('https://api.resend.com/emails', {
-          method:  'POST',
+          method: 'POST',
           headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-          body:    JSON.stringify({
-            from:    `Pumudu Anuradha <${FROM_EMAIL}>`,
-            to:      safe.email,
+          body: JSON.stringify({
+            from: `Pumudu Anuradha <${FROM_EMAIL}>`,
+            to: safe.email,
             subject: `👋 Got your message, ${safe.name.split(' ')[0]}!`,
-            html:    generateAutoReplyHTML(safe.name, safe.message, subjectLabel),
+            html: generateAutoReplyHTML(safe.name, safe.message, subjectLabel),
           }),
         }),
       ])
@@ -188,7 +188,7 @@ export default {
       // ── Log any failures ─────────────────────────────────────
       for (const [label, result] of [
         ['Email', emailResult], ['Telegram', telegramResult], ['AutoReply', autoReplyResult]
-      ] as const) {
+      ]) {
         if (result.status === 'fulfilled' && !result.value.ok) {
           const txt = await result.value.text().catch(() => '')
           console.error(`${label} error ${result.value.status}:`, txt)
@@ -197,8 +197,8 @@ export default {
         }
       }
 
-      const emailOk     = emailResult.status     === 'fulfilled' && emailResult.value.ok
-      const telegramOk  = telegramResult.status  === 'fulfilled' && telegramResult.value.ok
+      const emailOk = emailResult.status === 'fulfilled' && emailResult.value.ok
+      const telegramOk = telegramResult.status === 'fulfilled' && telegramResult.value.ok
       const autoReplyOk = autoReplyResult.status === 'fulfilled' && autoReplyResult.value.ok
 
       if (emailOk || telegramOk) {
@@ -227,11 +227,11 @@ function jsonRes(data, status = 200, extra = {}) {
 // ── HTML sanitiser ───────────────────────────────────────────────
 function sanitize(str) {
   return str
-    .replace(/&/g,  '&amp;')
-    .replace(/</g,  '&lt;')
-    .replace(/>/g,  '&gt;')
-    .replace(/"/g,  '&quot;')
-    .replace(/'/g,  '&#x27;')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
 }
 
 // ── Rate limiter (KV) ────────────────────────────────────────────
@@ -239,10 +239,10 @@ function sanitize(str) {
 //   key = "rl:<IP>", value = JSON {count, windowStart}
 //   max 3 requests per hour (3600 seconds)
 async function checkRateLimit(kv, ip, limit = 3, windowSecs = 3600) {
-  const key   = `rl:${ip}`
-  const now   = Date.now()
-  const raw   = await kv.get(key)
-  let entry   = raw ? JSON.parse(raw) : { count: 0, windowStart: now }
+  const key = `rl:${ip}`
+  const now = Date.now()
+  const raw = await kv.get(key)
+  let entry = raw ? JSON.parse(raw) : { count: 0, windowStart: now }
 
   // Reset if window has expired
   if (now - entry.windowStart > windowSecs * 1000) {
@@ -250,13 +250,13 @@ async function checkRateLimit(kv, ip, limit = 3, windowSecs = 3600) {
   }
 
   if (entry.count >= limit) {
-    const elapsed       = now - entry.windowStart
-    const retryAfterMs  = windowSecs * 1000 - elapsed
+    const elapsed = now - entry.windowStart
+    const retryAfterMs = windowSecs * 1000 - elapsed
     const retryAfterSec = Math.ceil(retryAfterMs / 1000)
     return {
-      limited:            true,
-      retryAfterSeconds:  retryAfterSec,
-      retryAfterMinutes:  Math.ceil(retryAfterSec / 60),
+      limited: true,
+      retryAfterSeconds: retryAfterSec,
+      retryAfterMinutes: Math.ceil(retryAfterSec / 60),
     }
   }
 
@@ -297,11 +297,11 @@ function detectSpam(name, message) {
 // ── Subject label ────────────────────────────────────────────────
 function getSubjectLabel(subject) {
   const map = {
-    general:       '💬 General Inquiry',
-    job:           '💼 Job Opportunity',
+    general: '💬 General Inquiry',
+    job: '💼 Job Opportunity',
     collaboration: '🤝 Collaboration',
-    freelance:     '🚀 Freelance Project',
-    other:         '📌 Other',
+    freelance: '🚀 Freelance Project',
+    other: '📌 Other',
   }
   return map[subject] || '💬 General Inquiry'
 }
@@ -310,11 +310,11 @@ function getSubjectLabel(subject) {
 function getCountryName(code) {
   if (!code) return 'Unknown'
   const c = {
-    LK:'Sri Lanka', US:'United States', GB:'United Kingdom', IN:'India',
-    AU:'Australia', CA:'Canada', DE:'Germany', FR:'France', JP:'Japan',
-    SG:'Singapore', AE:'UAE', NL:'Netherlands', SE:'Sweden', KR:'South Korea',
-    BR:'Brazil', IT:'Italy', ES:'Spain', PK:'Pakistan', BD:'Bangladesh',
-    MY:'Malaysia', NG:'Nigeria', ZA:'South Africa', EG:'Egypt', MX:'Mexico',
+    LK: 'Sri Lanka', US: 'United States', GB: 'United Kingdom', IN: 'India',
+    AU: 'Australia', CA: 'Canada', DE: 'Germany', FR: 'France', JP: 'Japan',
+    SG: 'Singapore', AE: 'UAE', NL: 'Netherlands', SE: 'Sweden', KR: 'South Korea',
+    BR: 'Brazil', IT: 'Italy', ES: 'Spain', PK: 'Pakistan', BD: 'Bangladesh',
+    MY: 'Malaysia', NG: 'Nigeria', ZA: 'South Africa', EG: 'Egypt', MX: 'Mexico',
   }
   return c[code] || code
 }
@@ -372,7 +372,7 @@ ${mapsUrl ? `└ <a href="${mapsUrl}">📍 View on Maps</a>` : `└ Coords: ${v.
 // ═══════════════════════════════════════════════════════════════
 function generateAutoReplyHTML(name, message, subjectLabel) {
   const firstName = name.split(' ')[0]
-  const preview   = message.length > 120 ? message.slice(0, 120) + '…' : message
+  const preview = message.length > 120 ? message.slice(0, 120) + '…' : message
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -469,23 +469,23 @@ function generateAutoReplyHTML(name, message, subjectLabel) {
 // NOTIFICATION EMAIL HTML  (sent to you)
 // ═══════════════════════════════════════════════════════════════
 function generateEmailHTML(name, email, phone, message, subject, subjectLabel, v) {
-  const d         = new Date(v.timestamp)
-  const dateStr   = d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-  const timeStr   = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' })
-  const initial   = name.charAt(0).toUpperCase()
+  const d = new Date(v.timestamp)
+  const dateStr = d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+  const timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' })
+  const initial = name.charAt(0).toUpperCase()
   const scoreColor = v.recaptchaScore >= 0.7 ? '#00d4aa' : v.recaptchaScore >= 0.4 ? '#ffd166' : '#ff6b9d'
-  const scoreLabel = v.recaptchaScore >= 0.7 ? 'Human'   : v.recaptchaScore >= 0.4 ? 'Suspicious' : 'Bot-like'
-  const mapsUrl    = (v.latitude !== '—' && v.longitude !== '—')
+  const scoreLabel = v.recaptchaScore >= 0.7 ? 'Human' : v.recaptchaScore >= 0.4 ? 'Suspicious' : 'Bot-like'
+  const mapsUrl = (v.latitude !== '—' && v.longitude !== '—')
     ? `https://maps.google.com/?q=${v.latitude},${v.longitude}`
     : null
 
   // Subject badge colour
   const subjectColors = {
-    general:       '#6c63ff',
-    job:           '#00d4aa',
+    general: '#6c63ff',
+    job: '#00d4aa',
     collaboration: '#ffd166',
-    freelance:     '#ff6b9d',
-    other:         '#a78bfa',
+    freelance: '#ff6b9d',
+    other: '#a78bfa',
   }
   const subjectColor = subjectColors[subject] || '#6c63ff'
 

@@ -1,0 +1,17 @@
+name = "pumudu-contact"
+main = "cloudflare-worker.js"
+compatibility_date = "2024-01-01"
+
+# Non-sensitive config vars (safe to commit)
+[vars]
+YOUR_EMAIL = "pumudu820@gmail.com"
+FROM_EMAIL = "contact@pumudu.online"
+TELEGRAM_CHAT_ID = "1599757019"
+
+# Secrets are set via: npx wrangler secret put <NAME>
+# Never put secret values here — they go in Cloudflare's encrypted store.
+# Required secrets: RESEND_API_KEY, TELEGRAM_BOT_TOKEN, RECAPTCHA_SECRET
+
+[[kv_namespaces]]
+binding = "CONTACT_KV"
+id = "8da671e40d0c47e0b593028d3939bf2d"

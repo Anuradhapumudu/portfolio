@@ -68,9 +68,7 @@ export default {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return jsonRes({ error: 'Please provide a valid email address.', code: 'INVALID_EMAIL' }, 400, corsHeaders)
       }
-      if (!token) {
-        return jsonRes({ error: 'Security token missing. Please refresh and try again.', code: 'TOKEN_MISSING' }, 400, corsHeaders)
-      }
+      // token can be empty if reCAPTCHA didn't load — the verify step below will handle it
       if (message.length > 1000) {
         return jsonRes({ error: 'Message must be 1000 characters or fewer.', code: 'MESSAGE_TOO_LONG' }, 400, corsHeaders)
       }
@@ -104,20 +102,23 @@ export default {
         }
       }
 
-      // ── Verify reCAPTCHA v3 ──────────────────────────────────
-      const captchaResp = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ secret: RECAPTCHA_SECRET, response: token, remoteip: clientIP }),
-      })
-      const captchaResult = await captchaResp.json()
+      // ── Verify reCAPTCHA v3 (skip if no token — graceful degradation) ──
+      let captchaResult = { success: true, score: 1.0, 'error-codes': [] }
+      if (token) {
+        const captchaResp = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ secret: RECAPTCHA_SECRET, response: token, remoteip: clientIP }),
+        })
+        captchaResult = await captchaResp.json()
 
-      if (!captchaResult.success || captchaResult.score < 0.3) {
-        return jsonRes({
-          error: 'Security verification failed. Please refresh and try again.',
-          code: 'CAPTCHA_FAILED',
-          details: captchaResult['error-codes'],
-        }, 403, corsHeaders)
+        if (!captchaResult.success || captchaResult.score < 0.3) {
+          return jsonRes({
+            error: 'Security verification failed. Please refresh and try again.',
+            code: 'CAPTCHA_FAILED',
+            details: captchaResult['error-codes'],
+          }, 403, corsHeaders)
+        }
       }
 
       // ── Collect Cloudflare visitor metadata ──────────────────

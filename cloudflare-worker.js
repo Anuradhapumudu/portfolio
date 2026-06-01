@@ -17,7 +17,6 @@ export default {
 
     // ── CORS Pre-flight ──────────────────────────────────────────
     const ALLOWED_ORIGINS = [
-      'https://pumudu.lovable.app',
       'https://pumudu.online',
       'https://anuradhapumudu.github.io',
       'http://localhost:5173',   // Vite dev
@@ -440,7 +439,7 @@ function generateAutoReplyHTML(name, message, subjectLabel) {
                   <p style="margin:0;color:#8888a8;font-size:13px;line-height:1.7;">
                     While you wait, feel free to check out my work on
                     <a href="https://github.com/Anuradhapumudu" style="color:#a78bfa;text-decoration:none;">GitHub</a>
-                    or visit <a href="https://pumudu.lovable.app/" style="color:#22d3ee;text-decoration:none;">pumudu.lovable.app</a>.
+                    or visit <a href="https://pumudu.online/" style="color:#22d3ee;text-decoration:none;">pumudu.online</a>.
                   </p>
                 </td>
               </tr>
@@ -453,7 +452,7 @@ function generateAutoReplyHTML(name, message, subjectLabel) {
           <td align="center" style="padding:20px 0;">
             <p style="margin:0;color:#3a3a50;font-size:11px;">
               This is an automated reply from
-              <a href="https://pumudu.lovable.app/" style="color:#a78bfa;text-decoration:none;">pumudu.lovable.app</a>
+              <a href="https://pumudu.online/" style="color:#a78bfa;text-decoration:none;">pumudu.online</a>
               — please do not reply to this email.
             </p>
           </td>
@@ -677,7 +676,7 @@ function generateEmailHTML(name, email, phone, message, subject, subjectLabel, v
         <tr>
           <td align="center" style="padding:24px 0;">
             <p style="margin:0;color:#3a3a50;font-size:11px;">
-              <a href="https://pumudu.lovable.app/" style="color:#6c63ff;text-decoration:none;">pumudu.lovable.app</a> · Contact form notification
+              <a href="https://pumudu.online/" style="color:#6c63ff;text-decoration:none;">pumudu.online</a> · Contact form notification
             </p>
           </td>
         </tr>

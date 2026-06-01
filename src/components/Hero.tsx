@@ -1,7 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowDown } from 'lucide-react'
-import heroImg from '../assets/hero-bg-premium.png'
+import { useTheme } from '../theme'
 
+import heroBgAurora from '../assets/hero-bg-aurora.png'
+import heroBgSunset from '../assets/hero-bg-sunset.png'
+import heroBgMatrix from '../assets/hero-bg-matrix.png'
+import heroBgRose   from '../assets/hero-bg-rose.png'
+
+const THEME_IMAGES: Record<string, string> = {
+  aurora: heroBgAurora,
+  sunset: heroBgSunset,
+  matrix: heroBgMatrix,
+  rose:   heroBgRose,
+}
 
 const ROLES = [
   'macOS Tooling',
@@ -45,7 +56,7 @@ function Typewriter({ words }: { words: string[] }) {
   }, [])
 
   return (
-    <span className="text-gradient" style={{ whiteSpace: 'nowrap' }}>
+    <span className="text-gradient">
       {text}
       <span
         aria-hidden
@@ -70,6 +81,10 @@ interface Props {
 
 export function Hero({ onOpenContact }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null)
+  const { theme, mode } = useTheme()
+
+  const heroBg   = THEME_IMAGES[theme.key] ?? heroBgAurora
+  const isLight  = mode === 'light'
 
   const scrollDown = () => {
     const el = document.querySelector('#about')
@@ -84,22 +99,26 @@ export function Hero({ onOpenContact }: Props) {
           className="hero-img-bg"
           style={{
             position: 'absolute', inset: 0,
-            backgroundImage: `url(${heroImg})`,
+            backgroundImage: `url(${heroBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            opacity: 0.5,
-            mixBlendMode: 'screen',
-            filter: 'saturate(1.2)'
+            opacity: isLight ? 0.25 : 0.5,
+            mixBlendMode: isLight ? 'multiply' : 'screen',
+            filter: 'saturate(1.2)',
+            transition: 'background-image 0.6s ease, opacity 0.4s ease',
           }}
         />
-        {/* Fade overlay so the bottom fades smoothly into the dark background and text is legible */}
+        {/* Fade overlay — adapts to dark/light */}
         <div
+          className="hero-fade-overlay"
           style={{
             position: 'absolute', inset: 0,
-            background: 'linear-gradient(to bottom, rgba(5,5,15,0.4) 0%, rgba(5,5,15,0.7) 50%, rgba(5,5,15,1) 100%)'
+            background: isLight
+              ? 'linear-gradient(to bottom, rgba(243,244,248,0.3) 0%, rgba(243,244,248,0.75) 60%, rgba(243,244,248,1) 100%)'
+              : 'linear-gradient(to bottom, rgba(5,5,15,0.3) 0%, rgba(5,5,15,0.65) 50%, rgba(5,5,15,1) 100%)',
           }}
         />
-        <div className="grid-bg" style={{ opacity: 0.5 }} />
+        <div className="grid-bg" style={{ opacity: isLight ? 0.2 : 0.5 }} />
         <div className="hero-orb hero-orb-1" />
         <div className="hero-orb hero-orb-2" />
         <div className="hero-orb hero-orb-3" />

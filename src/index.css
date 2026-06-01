@@ -134,6 +134,68 @@
 [data-mode="light"] .hero-orb-2 { background: rgba(6, 182, 212, 0.12); }
 [data-mode="light"] .hero-orb-3 { background: rgba(244, 114, 182, 0.10); }
 
+/* Light mode: text legibility on hero */
+[data-mode="light"] .hero-heading {
+  color: #0f172a;
+}
+[data-mode="light"] .hero-sub {
+  color: #334155;
+}
+[data-mode="light"] .hero-sub strong {
+  color: #0f172a;
+}
+[data-mode="light"] .hero-scroll {
+  color: #64748b;
+}
+
+/* Light mode: fix btn-secondary visibility */
+[data-mode="light"] .btn-secondary {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #0f172a;
+}
+[data-mode="light"] .btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Light mode: section headings */
+[data-mode="light"] .timeline-title,
+[data-mode="light"] .projects-title,
+[data-mode="light"] .stack-title,
+[data-mode="light"] .about-title,
+[data-mode="light"] .contact-title {
+  color: #0f172a;
+}
+
+/* Light mode: nav */
+[data-mode="light"] .nav {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+[data-mode="light"] .nav-link {
+  color: #64748b;
+}
+[data-mode="light"] .nav-link:hover,
+[data-mode="light"] .nav-link.active {
+  color: #0f172a;
+}
+
+/* Light mode: nav hire btn needs enough contrast */
+[data-mode="light"] .nav-hire-btn {
+  color: #fff;
+}
+
+/* Light mode: mode toggle */
+[data-mode="light"] .mode-toggle-btn {
+  border-color: rgba(0,0,0,0.15);
+  color: #334155;
+}
+
+/* Light mode: badge */
+[data-mode="light"] .badge-text {
+  color: #334155;
+}
+
 /* ─── Reset ─────────────────────────────────────────────────── */
 *,
 *::before,
@@ -608,9 +670,9 @@ section {
   margin-inline: auto;
   padding-inline: var(--px);
   height: 4rem;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
 }
 
@@ -627,7 +689,13 @@ section {
 .nav-links {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 2rem;
+}
+
+/* Utility: hide on mobile (≤768px) */
+@media (max-width: 768px) {
+  .hidden-mobile { display: none !important; }
 }
 
 .nav-link {
@@ -1756,12 +1824,23 @@ section {
   }
 
   /* Nav */
+  .nav-inner {
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+  }
+
   .nav-links,
-  .nav-cta {
+  .nav-cta .nav-hire-btn,
+  .nav-cta .theme-switcher,
+  .nav-cta .mode-toggle-btn {
     display: none;
   }
 
   .nav-mobile-toggle {
+    display: flex;
+  }
+
+  .nav-cta {
     display: flex;
   }
 

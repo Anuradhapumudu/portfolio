@@ -2,7 +2,7 @@ import { useReveal } from '../hooks/useReveal'
 
 const EVENTS = [
   {
-    date:  'Jul 2025',
+    date:  'May 2022',
     title: 'Joined GitHub',
     desc:  'Started publishing code openly — first steps into the open-source community.',
     color: '#10b981',
@@ -97,7 +97,7 @@ export function Timeline() {
       <div className={`timeline-header reveal${shown ? ' visible' : ''}`}>
         <p className="section-label">Journey</p>
         <h2 className="timeline-title">
-          One year of{' '}
+          Years of{' '}
           <span className="text-gradient">shipping</span>
         </h2>
         <p style={{ color: 'var(--text-muted)', marginTop: '1rem', fontSize: '1.0625rem', lineHeight: 1.7, maxWidth: '40ch', marginInline: 'auto' }}>

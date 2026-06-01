@@ -56,16 +56,19 @@ function useFormSubmit(onClose?: () => void) {
   const submit = useCallback(async (
     name: string, email: string, phone: string, message: string, subject: string
   ) => {
-    if (!executeRecaptcha) {
-      setErrorMsg('ReCAPTCHA not loaded. Please refresh.')
-      setStatus('error')
-      return
-    }
     setStatus('sending')
     setErrorMsg('')
     try {
-      const token = await executeRecaptcha('contact')
-      const res   = await fetch(import.meta.env.VITE_WORKER_URL || 'https://example.workers.dev', {
+      // reCAPTCHA is optional — if key not configured, send empty token
+      let token = ''
+      try {
+        if (executeRecaptcha) {
+          token = await executeRecaptcha('contact')
+        }
+      } catch {
+        // reCAPTCHA failed silently — proceed without token
+      }
+      const res = await fetch(import.meta.env.VITE_WORKER_URL || 'https://example.workers.dev', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ name, email, phone, message, subject, token }),

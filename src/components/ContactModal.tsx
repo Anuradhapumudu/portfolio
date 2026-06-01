@@ -64,7 +64,7 @@ export function ContactModal({ isOpen, onClose }: Props) {
         subject,
         token,
       }
-      const res  = await fetch(import.meta.env.VITE_WORKER_URL || 'https://example.workers.dev', {
+      const res  = await fetch(import.meta.env.VITE_WORKER_URL || 'https://pumudu-contact.pumudu820.workers.dev', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(payload),

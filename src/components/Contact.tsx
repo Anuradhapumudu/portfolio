@@ -68,7 +68,7 @@ function useFormSubmit(onClose?: () => void) {
       } catch {
         // reCAPTCHA failed silently — proceed without token
       }
-      const res = await fetch(import.meta.env.VITE_WORKER_URL || 'https://example.workers.dev', {
+      const res = await fetch(import.meta.env.VITE_WORKER_URL || 'https://pumudu-contact.pumudu820.workers.dev', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ name, email, phone, message, subject, token }),
